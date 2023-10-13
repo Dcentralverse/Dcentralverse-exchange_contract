@@ -10,8 +10,9 @@ contract RoyaltiesProvider is OwnableUpgradeable {
     }
 
     uint256 internal constant MAX_FEE = 10000;
-    mapping(address nftContract => mapping(uint256 tokenId => Royalties royalty)) royaltiesPerTokenId;
-    mapping(address nftContract => uint256 limit) royaltyLimit;
+    mapping(address nftContract => mapping(uint256 tokenId => Royalties royalty))
+        internal _royaltiesPerTokenId;
+    mapping(address nftContract => uint256 limit) public royaltyLimit;
     address public exchangeAddress;
 
     event NewRoyaltiesLimitForCollection(
@@ -45,7 +46,7 @@ contract RoyaltiesProvider is OwnableUpgradeable {
             royaltyFee > royaltyLimit[nftContract]
         ) revert FeeOverTheLimit();
 
-        royaltiesPerTokenId[nftContract][tokenId] = Royalties(
+        _royaltiesPerTokenId[nftContract][tokenId] = Royalties(
             royaltyRecipient,
             royaltyFee
         );
@@ -78,7 +79,7 @@ contract RoyaltiesProvider is OwnableUpgradeable {
         uint256 tokenId,
         uint256 amount
     ) external view returns (address, uint256) {
-        Royalties memory royaltiesForToken = royaltiesPerTokenId[nftContract][
+        Royalties memory royaltiesForToken = _royaltiesPerTokenId[nftContract][
             tokenId
         ];
 
