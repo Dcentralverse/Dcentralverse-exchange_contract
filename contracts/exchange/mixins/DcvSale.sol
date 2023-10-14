@@ -50,7 +50,14 @@ abstract contract DcvSale is
         uint256 royaltyPercentage;
     }
 
-    event SaleSuccess();
+    event SaleSuccess(
+        address indexed nftContract,
+        uint256 indexed tokenId,
+        address indexed seller,
+        address buyer,
+        uint256 price,
+        uint256 platformFee
+    );
 
     function buyFromSale(
         bytes calldata signature,
@@ -86,8 +93,10 @@ abstract contract DcvSale is
         bytes calldata royaltySignature,
         SaleWithRoyalty calldata sale
     ) external payable nonReentrant {
-        if (sale.seller == msg.sender || sale.seller != sale.royaltyRecipient)
-            revert InvalidCaller();
+        if (sale.seller == msg.sender) revert InvalidCaller();
+        if (sale.seller != sale.royaltyRecipient) {
+            revert UnauthorizedRoyaltyChange();
+        }
 
         _verifySaleWithRoyaltySignature(
             sellerSignature,
@@ -99,7 +108,7 @@ abstract contract DcvSale is
 
         _invalidateNonce(sale.seller, sale.orderNonce);
 
-        (uint256 platformFee, uint256 royaltyFee) = _calculateFeesAndSetRoyalty(
+        uint256 platformFee = _calculateFeeAndSetRoyalty(
             sale.nftContract,
             sale.tokenId,
             sale.price,
@@ -114,7 +123,7 @@ abstract contract DcvSale is
             sale.price,
             sale.royaltyRecipient,
             platformFee,
-            royaltyFee
+            0
         );
     }
 
@@ -137,7 +146,14 @@ abstract contract DcvSale is
             seller
         );
 
-        emit SaleSuccess();
+        emit SaleSuccess(
+            nftContract,
+            tokenId,
+            seller,
+            msg.sender,
+            price,
+            platformFee
+        );
     }
 
     function _verifySaleSignature(

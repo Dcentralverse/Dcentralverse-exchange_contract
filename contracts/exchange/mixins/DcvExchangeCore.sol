@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../royalties/interface/IRoyaltiesProvider.sol";
 
 abstract contract DcvExchangeCore {
-    uint256 internal constant MAX_FEE = 10000;
+    uint256 internal constant MAX_FEE = 10_000;
     IRoyaltiesProvider public royaltiesProvider;
     IERC20 public erc20PaymentToken;
     uint256 public platformPercentage;
@@ -16,6 +16,7 @@ abstract contract DcvExchangeCore {
     error InvalidAddress();
     error InvalidPercentage();
     error UnsufficientCurrencySupplied();
+    error UnauthorizedRoyaltyChange();
 
     function _updateExchangeConfiguration(
         address _royaltiesProvider,
@@ -36,13 +37,13 @@ abstract contract DcvExchangeCore {
         platformPercentage = _platformPercentage;
     }
 
-    function _calculateFeesAndSetRoyalty(
+    function _calculateFeeAndSetRoyalty(
         address nftContract,
         uint256 tokenId,
         uint256 price,
         address royaltyRecipient,
         uint256 royaltyPercentage
-    ) internal returns (uint256 platformFee, uint256 royaltyFee) {
+    ) internal returns (uint256 platformFee) {
         royaltiesProvider.setRoyaltiesForToken(
             nftContract,
             tokenId,
@@ -51,7 +52,6 @@ abstract contract DcvExchangeCore {
         );
 
         platformFee = _calculateCut(platformPercentage, price);
-        royaltyFee = _calculateCut(royaltyPercentage, price);
     }
 
     function _calculateFees(

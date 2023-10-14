@@ -39,7 +39,7 @@ abstract contract DcvOffer is
         address bidder,
         address indexed seller,
         uint256 price,
-        uint256 totalFees
+        uint256 platformFee
     );
 
     error OfferExpired();

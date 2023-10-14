@@ -9,9 +9,9 @@ contract RoyaltiesProvider is OwnableUpgradeable {
         uint256 fee;
     }
 
-    uint256 internal constant MAX_FEE = 10000;
+    uint256 internal constant MAX_FEE = 10_000;
     mapping(address nftContract => mapping(uint256 tokenId => Royalties royalty))
-        internal _royaltiesPerTokenId;
+        public royaltiesPerTokenId;
     mapping(address nftContract => uint256 limit) public royaltyLimit;
     address public exchangeAddress;
 
@@ -27,6 +27,7 @@ contract RoyaltiesProvider is OwnableUpgradeable {
         uint256 fee
     );
 
+    error InvalidAddress();
     error InvalidCaller();
     error FeeOverTheLimit();
 
@@ -41,12 +42,13 @@ contract RoyaltiesProvider is OwnableUpgradeable {
         uint256 royaltyFee
     ) external {
         if (msg.sender != exchangeAddress) revert InvalidCaller();
+        if (royaltyRecipient == address(0)) revert InvalidAddress();
         if (
             royaltyLimit[nftContract] > 0 &&
             royaltyFee > royaltyLimit[nftContract]
         ) revert FeeOverTheLimit();
 
-        _royaltiesPerTokenId[nftContract][tokenId] = Royalties(
+        royaltiesPerTokenId[nftContract][tokenId] = Royalties(
             royaltyRecipient,
             royaltyFee
         );
@@ -79,7 +81,7 @@ contract RoyaltiesProvider is OwnableUpgradeable {
         uint256 tokenId,
         uint256 amount
     ) external view returns (address, uint256) {
-        Royalties memory royaltiesForToken = _royaltiesPerTokenId[nftContract][
+        Royalties memory royaltiesForToken = royaltiesPerTokenId[nftContract][
             tokenId
         ];
 
