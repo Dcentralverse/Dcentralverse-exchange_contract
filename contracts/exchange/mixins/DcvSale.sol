@@ -186,9 +186,27 @@ abstract contract DcvSale is
         bytes calldata royaltySignature,
         SaleWithRoyalty calldata sale
     ) internal view {
-        _verifyRoyaltyParameters(royaltySignature, sale);
+        bytes32 royaltyDigest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                _buildDomainSeparator(),
+                keccak256(
+                    abi.encode(
+                        ROYALTY_PARAMETERS_TYPEHASH,
+                        sale.nftContract,
+                        sale.tokenId,
+                        sale.royaltyRecipient,
+                        sale.royaltyPercentage
+                    )
+                )
+            )
+        );
 
-        bytes32 digest = keccak256(
+        if (royaltyDigest.recover(royaltySignature) != royaltiesSigner) {
+            revert InvalidSignature();
+        }
+
+        bytes32 saleDigest = keccak256(
             abi.encodePacked(
                 "\x19\x01",
                 _buildDomainSeparator(),
@@ -206,32 +224,7 @@ abstract contract DcvSale is
             )
         );
 
-        if (digest.recover(sellerSignature) != sale.seller) {
-            revert InvalidSignature();
-        }
-    }
-
-    function _verifyRoyaltyParameters(
-        bytes calldata royaltySignature,
-        SaleWithRoyalty calldata sale
-    ) internal view {
-        bytes32 digest = keccak256(
-            abi.encodePacked(
-                "\x19\x01",
-                _buildDomainSeparator(),
-                keccak256(
-                    abi.encode(
-                        ROYALTY_PARAMETERS_TYPEHASH,
-                        sale.nftContract,
-                        sale.tokenId,
-                        sale.royaltyRecipient,
-                        sale.royaltyPercentage
-                    )
-                )
-            )
-        );
-
-        if (digest.recover(royaltySignature) != royaltiesSigner) {
+        if (saleDigest.recover(sellerSignature) != sale.seller) {
             revert InvalidSignature();
         }
     }
