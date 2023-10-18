@@ -179,9 +179,9 @@ When bidder signs this typed message, you get signature that seller needs to pas
 
 ## DcvNonceManager
 
-This function will be called when a seller wants to cancel sale or a bidder wants to cancel offer. This function will be called directly from seller or bidder. If user wants to cancel sale/offer, he needs to pass `orderNonce` of that sale/offer to `cancelNonce` function.
-
 Example of using `orderNonce` in sales/offers: start with 0 and increment by 1 for each new sale/offer for that user. Keep track of single `orderNonce` for each user in the database. So there should not be two sales/offers with the same `orderNonce` for the same user. Two sales/offers can have the same `orderNonce` if they are created by different users.
+
+This function will be called when a seller wants to cancel sale or a bidder wants to cancel offer. This function will be called directly from seller or bidder. If user wants to cancel sale/offer, he needs to pass `orderNonce` of that sale/offer to `cancelNonce` function.
 
 ### cancelNonce
 
