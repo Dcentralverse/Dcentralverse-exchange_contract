@@ -51,7 +51,9 @@ describe("DcvSale", () => {
     const typedMessage = getTypedMessage_sale({
       chainId: network.config.chainId,
       verifierContract: dcvExchange.address,
+      orderNonce: 1,
       nftContract: nftContract.address,
+      tokenId: 2,
       price: ONE_ETHER,
     });
 
@@ -73,7 +75,9 @@ describe("DcvSale", () => {
     const typedMessage1 = getTypedMessage_saleWithRoyalty({
       chainId: network.config.chainId,
       verifierContract: dcvExchange.address,
+      orderNonce: 1,
       nftContract: nftContract.address,
+      tokenId: 2,
       price: ONE_ETHER,
       royaltyRecipient: signer.address,
       royaltyPercentage: 500,
@@ -89,6 +93,7 @@ describe("DcvSale", () => {
       chainId: network.config.chainId,
       verifierContract: dcvExchange.address,
       nftContract: nftContract.address,
+      tokenId: 2,
       royaltyRecipient: signer.address,
       royaltyPercentage: 500,
     });

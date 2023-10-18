@@ -44,7 +44,9 @@ const getTypedMessage_offer = ({
 const getTypedMessage_sale = ({
   chainId,
   verifierContract,
+  orderNonce,
   nftContract,
+  tokenId,
   price,
 }) => {
   const domain = {
@@ -65,9 +67,9 @@ const getTypedMessage_sale = ({
   };
 
   const values = {
-    orderNonce: 1,
+    orderNonce: orderNonce,
     nftContract: nftContract,
-    tokenId: 2,
+    tokenId: tokenId,
     price: price.toString(),
   };
 
@@ -77,7 +79,9 @@ const getTypedMessage_sale = ({
 const getTypedMessage_saleWithRoyalty = ({
   chainId,
   verifierContract,
+  orderNonce,
   nftContract,
+  tokenId,
   price,
   royaltyRecipient,
   royaltyPercentage,
@@ -102,9 +106,9 @@ const getTypedMessage_saleWithRoyalty = ({
   };
 
   const values = {
-    orderNonce: 1,
+    orderNonce: orderNonce,
     nftContract: nftContract,
-    tokenId: 2,
+    tokenId: tokenId,
     price: price.toString(),
     royaltyRecipient: royaltyRecipient,
     royaltyPercentage: royaltyPercentage,
@@ -117,6 +121,7 @@ const getTypedMessage_royaltyParameters = ({
   chainId,
   verifierContract,
   nftContract,
+  tokenId,
   royaltyRecipient,
   royaltyPercentage,
 }) => {
@@ -139,7 +144,7 @@ const getTypedMessage_royaltyParameters = ({
 
   const values = {
     nftContract: nftContract,
-    tokenId: 2,
+    tokenId: tokenId,
     royaltyRecipient: royaltyRecipient,
     royaltyPercentage: royaltyPercentage,
   };
