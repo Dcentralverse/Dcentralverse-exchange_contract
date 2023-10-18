@@ -21,6 +21,8 @@ Buyer wants to buy this NFT:
 
 1. Buyer calls `buyFromSale` function with the seller signature and sale details. Buyer must attach enough ETH to cover the price of the NFT.
 
+Function:
+
 ```solidity
 function buyFromSale(
     bytes calldata signature,
@@ -45,7 +47,7 @@ Parameters:
 | tokenId | uint256 | ID of the NFT. |
 | price | uint256 | Price of the NFT.
 
-To get typed message that needs to be signed by seller, use `getTypedMessage_sale` function that is located in test/helpers/eip712.js.
+To get typed message that needs to be signed by seller, use `getTypedMessage_sale` function that is located in `test/helpers/eip712.js`.
 These are fields you need to pass to get typed message:
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
 - `verifierContract` (address of DcvExchange contract)
@@ -70,6 +72,8 @@ Buyer wants to buy this NFT:
 
 1. Buyer calls `buyFromSaleWithRoyalty` function with both signatures and sale details. Buyer must attach enough ETH to cover the price of the NFT.
 
+Function:
+
 ```solidity
 function buyFromSaleWithRoyalty(
     bytes calldata sellerSignature,
@@ -91,14 +95,14 @@ Parameters:
 | Name | Type | Description |
 |---|---|---|
 | seller | address | Address of NFT owner that is selling NFT. |
-| orderNonce | uint256 | Unique identifier for this order and seller. |
+| orderNonce | uint256 | Unique seller identifier for this order. |
 | nftContract | address | Address of NFT contract. |
 | tokenId | uint256 | ID of the NFT. |
 | price | uint256 | Price of the NFT. |
 | royaltyRecipient | address | Address to receive royalty payments. |
 | royaltyPercentage | uint256 | Percentage to be paid as royalties. |
 
-To get typed message that needs to be signed by Dcv team, use `getTypedMessage_royaltyParameters` function that is located in test/helpers/eip712.js.
+To get typed message that needs to be signed by Dcv team, use `getTypedMessage_royaltyParameters` function that is located in `test/helpers/eip712.js`.
 These are fields you need to pass to get typed message:
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
 - `verifierContract` (address of DcvExchange contract)
@@ -107,7 +111,7 @@ These are fields you need to pass to get typed message:
 - `royaltyRecipient`
 - `royaltyPercentage`
 
-To get typed message that needs to be signed by seller, use `getTypedMessage_saleWithRoyalty` function that is located in test/helpers/eip712.js.
+To get typed message that needs to be signed by seller, use `getTypedMessage_saleWithRoyalty` function that is located in `test/helpers/eip712.js`.
 These are fields you need to pass to get typed message:
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
 - `verifierContract` (address of DcvExchange contract)
@@ -136,6 +140,8 @@ Seller wants to accept this offer for NFT:
 
 1. Seller calls `acceptOffer` function with the bidder signature and offer details.
 
+Function:
+
 ```solidity
 function acceptOffer(
     bytes calldata signature,
@@ -161,7 +167,9 @@ Parameters:
 | price | uint256 | Offer price for the NFT. |
 | expiresAt | uint256 | Timestamp when offer expires. |
 
-To get typed message that needs to be signed by bidder, use `getTypedMessage_offer` function that is located in test/helpers/eip712.js.
+`expiresAt` is timestamp in seconds. For example, if you want offer to expire in 1 day, you need to pass `block.timestamp + 86400` (86400 seconds = 1 day). If you want that offer is not expiring, you need to pass `2^256 - 1` or similar big number.
+
+To get typed message that needs to be signed by bidder, use `getTypedMessage_offer` function that is located in `test/helpers/eip712.js`.
 These are fields you need to pass to get typed message:
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
 - `verifierContract` (address of DcvExchange contract)
