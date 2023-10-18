@@ -127,7 +127,18 @@ Buyer needs to pass both signatures to `buyFromSaleWithRoyalty` function with ot
 
 ## DcvOffer
 
+This function will be called when a bidder wants to create offer for NFT.
+
 ### 1. acceptOffer
+
+Bidder wants to create offer for NFT:
+
+1. Bidder signs the message that authorizes the offer.
+2. Save the bidder signature in the database with offer details.
+
+Seller wants to accept this offer for NFT:
+
+1. Seller calls `acceptOffer` function with the bidder signature and offer details.
 
 ```solidity
 function acceptOffer(
@@ -135,3 +146,50 @@ function acceptOffer(
     Offer calldata offer
 ) external;
 ```
+
+Parameters:
+
+| Name | Type | Description |
+|---|---|---|
+| signature | bytes | Signature of the bidder that authorizes the offer. |
+| offer | Offer | Offer details. |
+
+`Offer` struct:
+
+| Name | Type | Description |
+|---|---|---|
+| bidder | address | Address of bidder that is creating offer for NFT. |
+| orderNonce | uint256 | Unique bidder identifier for this order. |
+| nftContract | address | Address of NFT contract. |
+| tokenId | uint256 | ID of the NFT. |
+| price | uint256 | Offer price for the NFT. |
+| expiresAt | uint256 | Timestamp when offer expires. |
+
+To get typed message that needs to be signed by bidder, use `getTypedMessage_offer` function that is located in test/helpers/eip712.js.
+These are fields you need to pass to get typed message:
+- `chainId` (ID of chain, for example Polygon Mainnet is 137)
+- `verifierContract` (address of DcvExchange contract)
+- `orderNonce`
+- `nftContract`
+- `tokenId`
+- `price`
+- `expiresAt`
+
+When bidder signs this typed message, you get signature that seller needs to pass to `acceptOffer` function with other offer details (`Offer` struct).
+
+## DcvNonceManager
+
+This function will be called when a seller wants to cancel sale or a bidder wants to cancel offer. This function will be called directly from seller or bidder. If user wants to cancel sale/offer, he needs to pass `orderNonce` of that sale/offer to `cancelNonce` function.
+
+Example of using `orderNonce` in sales/offers: start with 0 and increment by 1 for each new sale/offer for that user. Keep track of single `orderNonce` for each user in the database. So there should not be two sales/offers with the same `orderNonce` for the same user. Two sales/offers can have the same `orderNonce` if they are created by different users.
+
+### cancelNonce
+
+```solidity
+function cancelNonce(uint256 nonce) external;
+```
+
+Parameters:
+| Name | Type | Description |
+|---|---|---|
+| nonce | uint256 | Nonce that will be cancelled for caller. |
