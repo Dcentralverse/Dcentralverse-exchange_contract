@@ -129,7 +129,7 @@ Buyer needs to pass both signatures to `buyFromSaleWithRoyalty` function with ot
 
 This function will be called when a bidder wants to create offer for NFT.
 
-### 1. acceptOffer
+### acceptOffer
 
 Bidder wants to create offer for NFT:
 
