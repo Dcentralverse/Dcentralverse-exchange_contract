@@ -62,11 +62,11 @@ When seller signs this typed message, you get signature that buyer needs to pass
 
 Seller wants to sell NFT:
 
-1. Seller chooses royalty percentage, royalty recipient will be seller's address.
+1. Seller chooses royalty percentage, seller's address will be royalty recipient.
 2. Dcv team checks that royalty recipient is original minter of that NFT, and that percentage is valid. For example: 5% is 500, maximum is 10000 (100%).
-3. Dcv team signs royalty parameters for NFT.
+3. If everything is valid, Dcv team signs royalty parameters for that NFT.
 4. Seller signs the message that authorizes the sale.
-5. Save both signatures (team and seller) in the database and sale details.
+5. Save both signatures (team and seller) in the database with sale details.
 
 Buyer wants to buy this NFT:
 
@@ -100,27 +100,29 @@ Parameters:
 | royaltyRecipient | address | Address to receive royalty payments. |
 | royaltyPercentage | uint256 | Percentage to be paid as royalties. |
 
+Example of using `orderNonce`: start with 0 and increment by 1 for each new sale for that seller. Keep track of `orderNonce` for each seller in the database.
+
 To get typed message that needs to be signed by Dcv team, use `getTypedMessage_royaltyParameters` function that is located in test/helpers/eip712.js.
 These are fields you need to pass to get typed message:
-- chainId (ID of chain, for example Polygon Mainnet is 137)
-- verifierContract (address of DcvExchange contract)
-- nftContract
-- tokenId
-- royaltyRecipient
-- royaltyPercentage
+- `chainId` (ID of chain, for example Polygon Mainnet is 137)
+- `verifierContract` (address of DcvExchange contract)
+- `nftContract`
+- `tokenId`
+- `royaltyRecipient`
+- `royaltyPercentage`
 
 To get typed message that needs to be signed by seller, use `getTypedMessage_saleWithRoyalty` function that is located in test/helpers/eip712.js.
 These are fields you need to pass to get typed message:
-- chainId (ID of chain, for example Polygon Mainnet is 137)
-- verifierContract (address of DcvExchange contract)
-- orderNonce
-- nftContract
-- tokenId
-- price
-- royaltyRecipient
-- royaltyPercentage
+- `chainId` (ID of chain, for example Polygon Mainnet is 137)
+- `verifierContract` (address of DcvExchange contract)
+- `orderNonce`
+- `nftContract`
+- `tokenId`
+- `price`
+- `royaltyRecipient`
+- `royaltyPercentage`
 
-Buyer needs to pass both signatures to `buyFromSaleWithRoyalty` function with other sale details.
+Buyer needs to pass both signatures to `buyFromSaleWithRoyalty` function with other sale details (`SaleWithRoyalty` struct).
 
 
 ## DcvOffer
