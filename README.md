@@ -45,8 +45,6 @@ Parameters:
 | tokenId | uint256 | ID of the NFT. |
 | price | uint256 | Price of the NFT.
 
-Example of using `orderNonce`: start with 0 and increment by 1 for each new sale for that seller. Keep track of `orderNonce` for each seller in the database.
-
 To get typed message that needs to be signed by seller, use `getTypedMessage_sale` function that is located in test/helpers/eip712.js.
 These are fields you need to pass to get typed message:
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
@@ -99,8 +97,6 @@ Parameters:
 | price | uint256 | Price of the NFT. |
 | royaltyRecipient | address | Address to receive royalty payments. |
 | royaltyPercentage | uint256 | Percentage to be paid as royalties. |
-
-Example of using `orderNonce`: start with 0 and increment by 1 for each new sale for that seller. Keep track of `orderNonce` for each seller in the database.
 
 To get typed message that needs to be signed by Dcv team, use `getTypedMessage_royaltyParameters` function that is located in test/helpers/eip712.js.
 These are fields you need to pass to get typed message:
