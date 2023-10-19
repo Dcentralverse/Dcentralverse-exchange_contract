@@ -25,30 +25,31 @@ Function:
 
 ```solidity
 function buyFromSale(
-    bytes calldata signature,
-    Sale calldata sale
+  bytes calldata signature,
+  Sale calldata sale
 ) external payable;
 ```
 
 Parameters:
 
-| Name | Type | Description |
-|---|---|---|
+| Name      | Type  | Description                                       |
+| --------- | ----- | ------------------------------------------------- |
 | signature | bytes | Signature of the seller that authorizes the sale. |
-| sale | Sale | Sale details. |
+| sale      | Sale  | Sale details.                                     |
 
 `Sale` struct:
 
-| Name | Type | Description |
-|---|---|---|
-| seller | address | Address of NFT owner that is selling NFT. |
-| orderNonce | uint256 | Unique seller identifier for this order. |
-| nftContract | address | Address of NFT contract. |
-| tokenId | uint256 | ID of the NFT. |
-| price | uint256 | Price of the NFT.
+| Name        | Type    | Description                               |
+| ----------- | ------- | ----------------------------------------- |
+| seller      | address | Address of NFT owner that is selling NFT. |
+| orderNonce  | uint256 | Unique seller identifier for this order.  |
+| nftContract | address | Address of NFT contract.                  |
+| tokenId     | uint256 | ID of the NFT.                            |
+| price       | uint256 | Price of the NFT.                         |
 
 To get typed message that needs to be signed by seller, use `getTypedMessage_sale` function that is located in `test/helpers/eip712.js`.
 These are fields you need to pass to get typed message:
+
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
 - `verifierContract` (address of DcvExchange contract)
 - `orderNonce`
@@ -57,6 +58,25 @@ These are fields you need to pass to get typed message:
 - `price`
 
 When seller signs this typed message, you get signature that buyer needs to pass to `buyFromSale` function with other sale details (`Sale` struct).
+
+Example of using function in JavaScript (ethers.js):
+
+```javascript
+// called with buyer's wallet
+await dcvExchange.buyFromSale(
+  signature, // signed typed message by seller
+  {
+    seller: "0x395c42b29Bc2ddcB9b97A348b94E84DC06F27D53",
+    orderNonce: 3,
+    nftContract: "0x3d97fEcC48d59f938e1742879B7DC20a0f438A0d",
+    tokenId: 47,
+    price: ethers.utils.parseEther("1"), // 1 MATIC
+  },
+  {
+    value: ethers.utils.parseEther("1"), // 1 MATIC
+  }
+);
+```
 
 ### 2. buyFromSaleWithRoyalty
 
@@ -76,34 +96,35 @@ Function:
 
 ```solidity
 function buyFromSaleWithRoyalty(
-    bytes calldata sellerSignature,
-    bytes calldata royaltySignature,
-    SaleWithRoyalty calldata sale
+  bytes calldata sellerSignature,
+  bytes calldata royaltySignature,
+  SaleWithRoyalty calldata sale
 ) external payable;
 ```
 
 Parameters:
 
-| Name | Type | Description |
-|---|---|---|
-| sellerSignature | bytes | Signature of the seller that authorizes the sale. |
-| royaltySignature | bytes | Signature of the Dcv team that determines royalty setup. |
-| sale | SaleWithRoyalty | Sale details. |
+| Name             | Type            | Description                                              |
+| ---------------- | --------------- | -------------------------------------------------------- |
+| sellerSignature  | bytes           | Signature of the seller that authorizes the sale.        |
+| royaltySignature | bytes           | Signature of the Dcv team that determines royalty setup. |
+| sale             | SaleWithRoyalty | Sale details.                                            |
 
 `SaleWithRoyalty` struct:
 
-| Name | Type | Description |
-|---|---|---|
-| seller | address | Address of NFT owner that is selling NFT. |
-| orderNonce | uint256 | Unique seller identifier for this order. |
-| nftContract | address | Address of NFT contract. |
-| tokenId | uint256 | ID of the NFT. |
-| price | uint256 | Price of the NFT. |
-| royaltyRecipient | address | Address to receive royalty payments. |
-| royaltyPercentage | uint256 | Percentage to be paid as royalties. |
+| Name              | Type    | Description                               |
+| ----------------- | ------- | ----------------------------------------- |
+| seller            | address | Address of NFT owner that is selling NFT. |
+| orderNonce        | uint256 | Unique seller identifier for this order.  |
+| nftContract       | address | Address of NFT contract.                  |
+| tokenId           | uint256 | ID of the NFT.                            |
+| price             | uint256 | Price of the NFT.                         |
+| royaltyRecipient  | address | Address to receive royalty payments.      |
+| royaltyPercentage | uint256 | Percentage to be paid as royalties.       |
 
 To get typed message that needs to be signed by Dcv team, use `getTypedMessage_royaltyParameters` function that is located in `test/helpers/eip712.js`.
 These are fields you need to pass to get typed message:
+
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
 - `verifierContract` (address of DcvExchange contract)
 - `nftContract`
@@ -113,6 +134,7 @@ These are fields you need to pass to get typed message:
 
 To get typed message that needs to be signed by seller, use `getTypedMessage_saleWithRoyalty` function that is located in `test/helpers/eip712.js`.
 These are fields you need to pass to get typed message:
+
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
 - `verifierContract` (address of DcvExchange contract)
 - `orderNonce`
@@ -124,6 +146,27 @@ These are fields you need to pass to get typed message:
 
 Buyer needs to pass both signatures to `buyFromSaleWithRoyalty` function with other sale details (`SaleWithRoyalty` struct).
 
+Example of using function in JavaScript (ethers.js):
+
+```javascript
+// called with buyer's wallet
+await dcvExchange.buyFromSaleWithRoyalty(
+  sellerSignature, // signed typed message by seller
+  royaltySignature, // signed typed message by Dcv team
+  {
+    seller: "0x395c42b29Bc2ddcB9b97A348b94E84DC06F27D53",
+    orderNonce: 3,
+    nftContract: "0x3d97fEcC48d59f938e1742879B7DC20a0f438A0d",
+    tokenId: 47,
+    price: ethers.utils.parseEther("1"), // 1 MATIC
+    royaltyRecipient: "0x395c42b29Bc2ddcB9b97A348b94E84DC06F27D53",
+    royaltyPercentage: 500, // 5%
+  },
+  {
+    value: ethers.utils.parseEther("1"), // 1 MATIC
+  }
+);
+```
 
 ## DcvOffer
 
@@ -143,34 +186,32 @@ Seller wants to accept this offer for NFT:
 Function:
 
 ```solidity
-function acceptOffer(
-    bytes calldata signature,
-    Offer calldata offer
-) external;
+function acceptOffer(bytes calldata signature, Offer calldata offer) external;
 ```
 
 Parameters:
 
-| Name | Type | Description |
-|---|---|---|
+| Name      | Type  | Description                                        |
+| --------- | ----- | -------------------------------------------------- |
 | signature | bytes | Signature of the bidder that authorizes the offer. |
-| offer | Offer | Offer details. |
+| offer     | Offer | Offer details.                                     |
 
 `Offer` struct:
 
-| Name | Type | Description |
-|---|---|---|
-| bidder | address | Address of bidder that is creating offer for NFT. |
-| orderNonce | uint256 | Unique bidder identifier for this order. |
-| nftContract | address | Address of NFT contract. |
-| tokenId | uint256 | ID of the NFT. |
-| price | uint256 | Offer price for the NFT. |
-| expiresAt | uint256 | Timestamp when offer expires. |
+| Name        | Type    | Description                                       |
+| ----------- | ------- | ------------------------------------------------- |
+| bidder      | address | Address of bidder that is creating offer for NFT. |
+| orderNonce  | uint256 | Unique bidder identifier for this order.          |
+| nftContract | address | Address of NFT contract.                          |
+| tokenId     | uint256 | ID of the NFT.                                    |
+| price       | uint256 | Offer price for the NFT.                          |
+| expiresAt   | uint256 | Timestamp when offer expires.                     |
 
 `expiresAt` is timestamp in seconds. For example, if you want offer to expire in 1 day, you need to pass `block.timestamp + 86400` (86400 seconds = 1 day). If you want that offer is not expiring, you need to pass `2^256 - 1` or similar big number.
 
 To get typed message that needs to be signed by bidder, use `getTypedMessage_offer` function that is located in `test/helpers/eip712.js`.
 These are fields you need to pass to get typed message:
+
 - `chainId` (ID of chain, for example Polygon Mainnet is 137)
 - `verifierContract` (address of DcvExchange contract)
 - `orderNonce`
@@ -180,6 +221,23 @@ These are fields you need to pass to get typed message:
 - `expiresAt`
 
 When bidder signs this typed message, you get signature that seller needs to pass to `acceptOffer` function with other offer details (`Offer` struct).
+
+Example of using function in JavaScript (ethers.js):
+
+```javascript
+// called with seller's wallet
+await dcvExchange.acceptOffer(
+  signature, // signed typed message by bidder
+  {
+    bidder: "0x43D9B8D15d6bcC233D10145f9fc6b33D5E05ffF6",
+    orderNonce: 3,
+    nftContract: "0x3d97fEcC48d59f938e1742879B7DC20a0f438A0d",
+    tokenId: 47,
+    price: ethers.utils.parseUnits("1"), // 1 WMATIC
+    expiresAt: 30000000000, // Aug 30 2920.
+  }
+);
+```
 
 ## DcvNonceManager
 
