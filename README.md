@@ -255,3 +255,10 @@ Parameters:
 | Name | Type | Description |
 |---|---|---|
 | nonce | uint256 | Nonce that will be cancelled for caller. |
+
+Example of using function in JavaScript (ethers.js):
+
+```javascript
+// called with seller's or bidders wallet (depends who wants to cancel sale/offer)
+await dcvExchange.cancelNonce(3);
+```
